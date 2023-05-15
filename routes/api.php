@@ -23,8 +23,11 @@ Route::post('/register', [SiswaController::class, 'register']);
 Route::post('/login', [SiswaController::class, 'login']);
 
 Route::group(['middleware' => ['auth:sanctum']], function (){
-    Route::get('/me', [SiswaController::class, 'me']);
+    Route::post('/me', [SiswaController::class, 'me']);
     Route::post('/logout', [SiswaController::class, 'logout']);
+    Route::post('/getAll', [SiswaController::class, 'getAllUsers']);
+    Route::post('/getUser', [SiswaController::class, 'getUser']);
+    Route::post('/update', [SiswaController::class, 'updateUser']);
     // Route::post('auth/recover', 'Auth\SiswaController@recover');
     // Route::post('auth/reset', 'Auth\SiswaController@reset');
     // Route::post('auth/change-password', 'Auth\SiswaController@changePassword');

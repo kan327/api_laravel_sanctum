@@ -89,19 +89,91 @@ class SiswaController extends Authenticatable
         // Beri respons dengan data siswa yang baru ditambahkan
         return response()->json($this->response, $this->response['status']);
     }
-    public function me(Request $request) // untuk sementara belum dipakai
+    public function me(Request $request) // untuk sementara belum dipakai, bisa dipakai di postman
     {
         $user = $request->user();
         $this->response['message'] = "success";
         $this->response['data'] = $user;
         return response()->json($this->response, 200);
     }
-    
-    public function logout(Request $request) // untuk sementara belum dipakai
+    public function getUser(Request $req) // untuk sementara belum dipakai, bisa dipakai di postman
     {
-        $user = $request->user();
-        $user->tokens()->delete();
-        $this->response['message'] = "success";
-        return response()->json($this->response, 200); 
+        // Validasi input dari request
+        $req->validate([
+            'name' => 'requierd',
+            'email' => $req->email,
+            'password' => Hash::make($req->password),
+        ]);
+
+        // Cari data siswa dengan email yang cocok dari database
+        $user = Siswa::where('id', $req->id)->first();
+        if($user){
+            $this->response['message'] = "success";
+            $this->response['data'] = $user;
+            $this->response['status'] = 200;
+        }else{
+            $this->response['message'] = "404 Not Found";
+            $this->response['status'] = 404;
+        }
+        return response()->json($this->response, $this->response['status']);
+    }
+    public function logout(Request $request) 
+    {
+        try {
+            $user = $request->user();
+            $user->tokens()->delete();
+            $this->response['message'] = "success";
+            $this->response['status'] = 200;
+        } catch (Exception $e) {
+            $this->response['message'] = $e->getMessage();
+            $this->response['status'] = $e->getCode();
+        }
+        return response()->json($this->response, $this->response['status']); 
+    }
+    function getAllUsers(){
+        $users = Siswa::all();
+        if($users){
+            $this->response['message'] = "success";
+            $this->response['data'] = $users;
+            $this->response['status'] = 200;
+        }else{
+            $this->response['message'] = "404 Not Found";
+            $this->response['status'] = 404;
+        }
+
+        return response()->json($this->response, $this->response['status']); 
+    }
+    function updateUser(Request $request){
+        // Validasi input dari request
+        $request->validate([
+            'id' => 'required',
+            'name' => 'required',
+            'email' => 'required',
+            'password' => 'nullable',
+        ]);
+        $user = Siswa::find($request->id);
+        
+        if($request->password){
+            $user->update([
+                'name'=>$request->name,
+                'email'=>$request->email,
+                'password'=>$request->password,
+            ]);
+        }else{
+            $user->update([
+                'name'=>$request->name,
+                'email'=>$request->email,
+            ]);
+        }
+        
+        if($user){
+            $this->response['message'] = "success";
+            $this->response['data'] = $user;
+            $this->response['status'] = 200;
+        }else{
+            $this->response['message'] = "404 Not Found";
+            $this->response['status'] = 404;
+        }
+        return response()->json($this->response, $this->response['status']);
     }
 }
