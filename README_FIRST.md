@@ -13,5 +13,3 @@
 6. `php artisan migrate` untuk melakukan migrasi tabel ke dalam database
 
 7. Terakhir, jalankan perintah `php artisan serve --port=8081` untuk memulai server lokal. kalo bukan port 8081 pake php artisan serve biasa aja, tapi jangan lupa ganti api.dart di flutter nanti
-
-# ARIGATO NEE
